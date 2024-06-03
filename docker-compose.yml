@@ -12,6 +12,7 @@ services:
       - NUXEO_CLID=${NUXEO_CLID}
     volumes:
       - ./conf.d:/etc/nuxeo/conf.d
+      - ~/.aws:/home/nuxeo/.aws:ro
       - data:/var/lib/nuxeo
 volumes:
   data: {}
