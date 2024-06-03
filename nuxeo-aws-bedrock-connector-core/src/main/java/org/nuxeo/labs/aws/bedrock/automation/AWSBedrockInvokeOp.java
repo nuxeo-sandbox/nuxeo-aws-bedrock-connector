@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
         description = "Invoke the AWS Bedrock API")
 public class AWSBedrockInvokeOp {
 
-    public static final String ID = "Bedrock.GetEmbedding";
+    public static final String ID = "Bedrock.Invoke";
 
     @Param(name = "modelName", required = true)
     protected String modelName;
