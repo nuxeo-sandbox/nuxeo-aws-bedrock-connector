@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.aws.bedrock.service">
+
+  <implementation class="org.nuxeo.labs.aws.bedrock.service.AWSBedrockServiceImpl" />
+
+  <service>
+    <provide interface="org.nuxeo.labs.aws.bedrock.service.AWSBedrockService" />
+  </service>
+</component>

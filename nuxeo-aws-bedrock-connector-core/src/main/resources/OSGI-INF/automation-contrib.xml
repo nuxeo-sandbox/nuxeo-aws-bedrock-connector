@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.aws.bedrock.automation">
+
+    <extension point="operations" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
+        <operation class="org.nuxeo.labs.aws.bedrock.automation.AWSBedrockInvokeOp"/>
+    </extension>
+
+</component>
