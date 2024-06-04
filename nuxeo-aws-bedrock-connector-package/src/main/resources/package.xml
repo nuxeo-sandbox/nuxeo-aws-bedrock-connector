@@ -1,10 +1,10 @@
 <!-- See documentation at http://doc.nuxeo.com/x/HgIz -->
 <package type="addon" name="nuxeo-aws-bedrock-connector" version="@VERSION@">
-  <title>Nuxeo aws bedrock connector</title>
+  <title>Nuxeo AWS Bedrock Connector</title>
   <description>
-    <p>Put here an HTML description of your Nuxeo Package.</p>
+    <p>A connector for AWS Bedrock</p>
   </description>
-  <!-- <home-page>http://doc.nuxeo.com/</home-page> -->
+  <home-page>https://github.com/nuxeo-sandbox/nuxeo-aws-bedrock-connector</home-page>
   <vendor>Hyland</vendor>
   <installer restart="true" />
   <uninstaller restart="true" />
@@ -15,10 +15,9 @@
   <!-- Production State: production_ready | testing | proto -->
   <production-state>testing</production-state>
   <supported>false</supported>
-  <target-platform>
-    <name>lts</name>
-    <version>[@NUXEO_TARGET_VERSION@,)</version>
-  </target-platform>
+  <platforms>
+    <platform>lts-@NUXEO_TARGET_VERSION@</platform>
+  </platforms>
   <!-- Dependencies on other packages -->
   <!-- <dependencies> -->
   <!-- <package>another-package:1.0.0:1.0.0</package> -->
@@ -35,8 +34,8 @@
   <!-- <provides> -->
   <!-- <package>an-embedded-package:1.0.0:1.0.0</package> -->
   <!-- </provides> -->
-  <license></license>
-  <license-url></license-url>
+  <license>Apache License, Version 2.0</license>
+  <license-url>https://www.apache.org/licenses/LICENSE-2.0</license-url>
   <!-- Visibility: PRIVATE | MARKETPLACE | DEV | PUBLIC -->
-  <visibility>DEV</visibility>
+  <visibility>PUBLIC</visibility>>
 </package>
