@@ -59,9 +59,14 @@ public class TestAWSBedrockService {
                 {
                     "inputText" : "An image that shows the mascot of sendai city in japan eating a rice ball",
                     "inputImage": "%s"
-                }"
+                }
                 """, encodedString);
         InvokeModelResponse response = awsbedrockservice.invoke(titanModelId, payload);
+        JSONObject responseBody = new JSONObject(response.body().asUtf8String());
+        double[] embeddings = responseBody.getJSONArray("embedding")
+                .toList().stream().mapToDouble(v -> ((BigDecimal) v).doubleValue()).toArray();
+        Assert.assertNotNull(embeddings);
+        Assert.assertEquals(embeddings.length, 1024);
     }
 
 }
