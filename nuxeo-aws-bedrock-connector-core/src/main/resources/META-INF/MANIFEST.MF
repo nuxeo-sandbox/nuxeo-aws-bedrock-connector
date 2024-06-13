@@ -6,4 +6,4 @@ Bundle-Version: 1.0.0
 Bundle-Name: nuxeo-aws-bedrock-connector-core
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: nuxeo-aws-bedrock-connector-core;singleton=true
-Nuxeo-Component: OSGI-INF/service-contrib.xml, OSGI-INF/automation-contrib.xml
+Nuxeo-Component: OSGI-INF/service-contrib.xml, OSGI-INF/automation-contrib.xml, OSGI-INF/elasticsearch-hints-contrib.xml

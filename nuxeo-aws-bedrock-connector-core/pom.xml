@@ -35,6 +35,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.nuxeo.elasticsearch</groupId>
+            <artifactId>nuxeo-elasticsearch-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>bedrockruntime</artifactId>
         </dependency>
@@ -48,6 +54,13 @@
         <dependency>
             <groupId>org.nuxeo.ecm.automation</groupId>
             <artifactId>nuxeo-automation-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.elasticsearch</groupId>
+            <artifactId>nuxeo-elasticsearch-core</artifactId>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 
