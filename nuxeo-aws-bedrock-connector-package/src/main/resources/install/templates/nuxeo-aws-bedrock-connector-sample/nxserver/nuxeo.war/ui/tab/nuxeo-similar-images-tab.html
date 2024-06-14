@@ -1,0 +1,51 @@
+
+<link rel="import" href="../list/nuxeo-similar-images.html">
+
+<!--
+`nuxeo-similar-images-tab`
+@group Nuxeo UI
+@element nuxeo-similar-images-tab
+-->
+<dom-module id="nuxeo-similar-images-tab">
+  <template>
+    <style include="nuxeo-styles">
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <nuxeo-similar-images document="[[document]]" visible="[[visible]]" provider-name="vector-search"
+                          search-property="embedding_image" search-value="[[searchValue]]">
+    </nuxeo-similar-images>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-similar-images-tab',
+      properties: {
+        document: {
+          type: Object,
+        },
+        
+        visible: {
+          type: Boolean
+        },
+        
+        searchValue: {
+          type: String,
+          computed: '_computeSearchValue(document)'
+        } 
+      },
+      
+      _computeSearchValue: function(document) {
+        if (!document || !document.properties['embedding:image']) {
+          return;
+        }
+        return btoa(document.properties['embedding:image'].join(','));
+      }
+      
+    });
+  </script>
+</dom-module>
+

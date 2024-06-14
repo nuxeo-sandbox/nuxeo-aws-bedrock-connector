@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="org.nuxeo.labs.aws.bedrock.sample.ui" version="1.0.0">
+
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+        <resource name="aws-bedrock-sample-bundle.html" type="import" shrinkable="false">
+            <uri>/ui/aws-bedrock-sample-bundle.html</uri>
+        </resource>
+    </extension>
+
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
+        <bundle name="web-ui">
+            <resources append="true">
+                <resource>aws-bedrock-sample-bundle.html</resource>
+            </resources>
+        </bundle>
+    </extension>
+
+</component>
