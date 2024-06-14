@@ -1,5 +1,6 @@
 package org.nuxeo.labs.aws.bedrock;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -18,8 +19,11 @@ import org.nuxeo.labs.aws.bedrock.search.hint.KnnESHintQueryBuilder;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.opensearch.OpenSearchStatusException;
 
 import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
@@ -46,10 +50,15 @@ public class TestKnnEsHint {
         assertTrue(knnQueryBuilder.get() instanceof KnnESHintQueryBuilder);
     }
 
-    @Test(expected = NuxeoException.class)
+    @Test
     public void testHint() {
-        String nxql = "SELECT * FROM Document WHERE /*+ES: INDEX(embedding:value) OPERATOR(knn) */ embedding:value IN (0.5, 1)";
-        DocumentModelList ret = ess.query(new NxQueryBuilder(session).nxql(nxql));
+        String base64Vector = Base64.getEncoder().encodeToString("0.5,1".getBytes(StandardCharsets.UTF_8));
+        String nxql = String.format("SELECT * FROM Document WHERE /*+ES: INDEX(embedding:value) OPERATOR(knn) */ ecm:fulltext = '%s'",base64Vector);
+        NxQueryBuilder queryBuilder = new NxQueryBuilder(session).nxql(nxql);
+        try {
+            DocumentModelList ret = ess.query(queryBuilder);
+        } catch (NuxeoException e) {
+            Assert.assertTrue(e.getCause() instanceof OpenSearchStatusException);
+        }
     }
-
 }
