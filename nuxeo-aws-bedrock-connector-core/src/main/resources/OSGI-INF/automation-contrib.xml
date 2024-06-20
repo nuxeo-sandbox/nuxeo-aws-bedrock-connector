@@ -6,7 +6,7 @@
     </extension>
 
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="contextHelpers">
-        <contextHelper id="Blob2Base64" class="org.nuxeo.labs.aws.bedrock.automation.function.Blob2Base64Function"/>
+        <contextHelper id="Base64Helper" class="org.nuxeo.labs.aws.bedrock.automation.function.Base64Function"/>
     </extension>
 
 </component>

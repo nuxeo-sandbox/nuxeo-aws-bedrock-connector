@@ -20,7 +20,7 @@
                         'viewName': 'FullHD'
                       });
 
-                      var base64 = Blob2Base64.toBase64(blob);
+                      var base64 = Base64Helper.blob2Base64(blob);
 
                       var payload = {
                         "inputImage": base64,
@@ -63,7 +63,7 @@
                 'viewName': 'FullHD'
               });
 
-              var base64 = Blob2Base64.toBase64(blob);
+              var base64 = Base64Helper.blob2Base64(blob);
 
               var payload = {
                 "messages": [

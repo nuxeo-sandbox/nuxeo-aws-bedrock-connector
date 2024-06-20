@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.labs.aws.bedrock.automation.function.Blob2Base64Function;
+import org.nuxeo.labs.aws.bedrock.automation.function.Base64Function;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -18,13 +18,20 @@ import java.io.IOException;
 @RunWith(FeaturesRunner.class)
 @Features({AutomationFeature.class})
 @Deploy("nuxeo-aws-bedrock-connector-core")
-public class TestBlob2Base64Function {
+public class TestBase64Function {
 
     @Test
-    public void testBase64Conversion() throws IOException {
+    public void testBlob2Base64Conversion() throws IOException {
         Blob blob = new FileBlob(new File(getClass().getResource("/files/musubimaru.png").getPath()));
-        Blob2Base64Function fn = new Blob2Base64Function();
-        String base64str =  fn.toBase64(blob);
+        Base64Function fn = new Base64Function();
+        String base64str = fn.blob2Base64(blob);
         Assert.assertTrue(StringUtils.isNotBlank(base64str));
+    }
+
+    @Test
+    public void testString2Base64Conversion() throws IOException {
+        Base64Function fn = new Base64Function();
+        String base64str = fn.string2Base64("This is a test");
+        Assert.assertEquals("VGhpcyBpcyBhIHRlc3Q=", base64str);
     }
 }

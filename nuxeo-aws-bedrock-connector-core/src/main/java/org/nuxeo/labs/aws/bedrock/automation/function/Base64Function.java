@@ -7,13 +7,17 @@ import org.nuxeo.ecm.core.api.Blob;
 import java.io.IOException;
 import java.util.Base64;
 
-public class Blob2Base64Function implements ContextHelper {
+public class Base64Function implements ContextHelper {
 
-    public Blob2Base64Function() {}
+    public Base64Function() {}
 
-    public String toBase64(Blob blob) throws IOException {
+    public String blob2Base64(Blob blob) throws IOException {
         byte[] fileContent = IOUtils.toByteArray(blob.getStream());
         return Base64.getEncoder().encodeToString(fileContent);
+    }
+
+    public String string2Base64(String text) throws IOException {
+        return Base64.getEncoder().encodeToString(text.getBytes());
     }
 
 }
