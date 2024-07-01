@@ -39,6 +39,14 @@ curl --location 'http://localhost:8080/nuxeo/api/v1/automation/Bedrock.Invoke' \
 }'
 ```
 
+# How to run
+## Configuration
+The following nuxeo.conf properties are available to configure the plugin
+
+| Property name              | description                  |
+|----------------------------|------------------------------|
+| nuxeo.aws.bedrock.region   | The region to use (OPTIONAL) |
+
 # Support
 **These features are not part of the Nuxeo Production platform.**
 

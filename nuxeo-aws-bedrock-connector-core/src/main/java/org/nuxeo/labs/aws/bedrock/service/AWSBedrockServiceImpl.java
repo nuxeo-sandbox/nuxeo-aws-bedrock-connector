@@ -1,5 +1,6 @@
 package org.nuxeo.labs.aws.bedrock.service;
 
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.DefaultComponent;
 
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -14,8 +15,10 @@ public class AWSBedrockServiceImpl extends DefaultComponent implements AWSBedroc
 
     public InvokeModelResponse invoke(String modelName, String jsonPayload) {
 
+        String region = Framework.getProperty("nuxeo.aws.bedrock.region");
+
         try (BedrockRuntimeClient client = BedrockRuntimeClient.builder()
-                .region(Region.US_WEST_2)
+                .region(region != null ? Region.of(region) : null)
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .build()) {
 
