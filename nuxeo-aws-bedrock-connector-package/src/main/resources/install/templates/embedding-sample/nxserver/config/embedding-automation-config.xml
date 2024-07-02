@@ -91,7 +91,7 @@
 
               var responseBlob = Bedrock.Invoke(null, {
                 'jsonPayload': JSON.stringify(payload),
-                'modelName': 'anthropic.claude-3-sonnet-20240229-v1:0'
+                'modelName': 'anthropic.claude-3-5-sonnet-20240620-v1:0'
               });
 
               var response = JSON.parse(responseBlob.getString());
