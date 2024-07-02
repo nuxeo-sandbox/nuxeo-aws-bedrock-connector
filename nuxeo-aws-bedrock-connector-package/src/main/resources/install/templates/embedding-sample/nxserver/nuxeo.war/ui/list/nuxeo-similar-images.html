@@ -228,6 +228,15 @@
 
     },
 
+    observers: ['_update(searchValue, visible)'],
+
+    _update: function(searchValue, visible) {
+      if (visible) {
+        this.params = this._computeParams(document);
+        this._refresh();
+      }
+    },
+
     _computeParams: function(document) {
       let params;
       if (document) {

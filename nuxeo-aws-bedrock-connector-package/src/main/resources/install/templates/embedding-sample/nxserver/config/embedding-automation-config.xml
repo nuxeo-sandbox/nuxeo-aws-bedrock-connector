@@ -85,7 +85,7 @@
                     ]
                   }
                 ],
-                "max_tokens": 512,
+                "max_tokens": 100,
                 "anthropic_version": "bedrock-2023-05-31"
               };
 
@@ -110,9 +110,10 @@
     </extension>
 
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="event-handlers">
-        <handler chainId="javascript.api_compute_picture_embeddings" id="onPictureConverted">
+        <handler chainId="javascript.api_compute_picture_embeddings" id="onPictureViewGenerated">
             <event>pictureViewsGenerationDone</event>
             <filters>
+                <facet>Embedding</facet>
                 <facet>Picture</facet>
                 <attribute>Regular Document</attribute>
             </filters>

@@ -34,12 +34,12 @@
         
         searchValue: {
           type: String,
-          computed: '_computeSearchValue(document)'
+          computed: '_computeSearchValue(document,visible)'
         } 
       },
       
-      _computeSearchValue: function(document) {
-        if (!document || !document.properties['embedding:image']) {
+      _computeSearchValue: function(document,visible) {
+        if (!visible || !document || !document.properties['embedding:image']) {
           return;
         }
         return btoa(document.properties['embedding:image'].join(','));

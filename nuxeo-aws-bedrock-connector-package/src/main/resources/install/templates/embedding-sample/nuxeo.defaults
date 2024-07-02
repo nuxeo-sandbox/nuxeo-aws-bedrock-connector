@@ -1,2 +1,2 @@
 ## Edit this file to customize your configuration ##
-nuxeo-aws-bedrock-connector-sample.target=.
+embedding-sample.target=.
