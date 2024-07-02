@@ -11,11 +11,6 @@
             <script>
                 <![CDATA[function run(input, params) {
 
-                      if (!input.hasFacet('Picture')) {
-                        Console.log('Not a Picture');
-                        return input;
-                      }
-
                       var blob = Picture.GetView(input, {
                         'viewName': 'FullHD'
                       });
@@ -23,6 +18,7 @@
                       var base64 = Base64Helper.blob2Base64(blob);
 
                       var payload = {
+                        "inputText": input['dc:description'],
                         "inputImage": base64,
                         "embeddingConfig": {
                          "outputEmbeddingLength": 1024
@@ -35,8 +31,6 @@
                       });
 
                       var response = JSON.parse(responseBlob.getString());
-
-                      Console.log(responseBlob.getString());
 
                       input['embedding:image'] = response.embedding;
 
@@ -96,8 +90,6 @@
 
               var response = JSON.parse(responseBlob.getString());
 
-              Console.log(responseBlob.getString());
-
               input['dc:description'] = response.content[0].text;
 
               input = Document.Save(input, {});
@@ -107,10 +99,27 @@
             }]]>
             </script>
         </scriptedOperation>
+
+        <scriptedOperation id="javascript.eh_picture_view_generated">
+            <inputType>document</inputType>
+            <outputType>document</outputType>
+            <category>javascript</category>
+            <description></description>
+            <script>
+                <![CDATA[function run(input, params) {
+
+              input = javascript.api_describe_image(input, {});
+
+              input = javascript.api_compute_picture_embeddings(input, {});
+
+              return input;
+            }]]>
+            </script>
+        </scriptedOperation>
     </extension>
 
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="event-handlers">
-        <handler chainId="javascript.api_compute_picture_embeddings" id="onPictureViewGenerated">
+        <handler chainId="javascript.eh_picture_view_generated" id="onPictureViewGenerated" postCommit="true">
             <event>pictureViewsGenerationDone</event>
             <filters>
                 <facet>Embedding</facet>
