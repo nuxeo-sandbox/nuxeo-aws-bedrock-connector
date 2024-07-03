@@ -242,6 +242,8 @@
       if (this.searchValue) {
         params.vector_index = this.searchProperty;
         params.vector_value = this.searchValue;
+        params.min_score = "0.5";
+        params.k = "30";
       }
       return params;
     }

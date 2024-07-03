@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.security.SecurityService;
@@ -36,14 +37,24 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
     @Override
     public List<DocumentModel> getCurrentPage() {
 
-        Map<String,String> namedParameters = (Map<String, String>) getSearchDocumentModel().getContextData(NAMED_PARAMETERS);
+        DocumentModel searchDoc = getSearchDocumentModel();
+
+        if (searchDoc == null) {
+            return getEmptyResult();
+        }
+
+        Map<String,String> namedParameters = (Map<String, String>) searchDoc.getContextData(NAMED_PARAMETERS);
+
+        if (namedParameters == null) {
+            return getEmptyResult();
+        }
 
         String index = namedParameters.get("vector_index");
         String vector = namedParameters.get("vector_value");
+        float minScore = Float.parseFloat(namedParameters.getOrDefault("min_score","0.5"));
 
         if (StringUtils.isBlank(index) || StringUtils.isBlank(vector)) {
-            setResultsCount(0);
-            return new DocumentModelListImpl();
+            return getEmptyResult();
         }
 
         QueryBuilder queryBuilder = QueryBuilders.wrapperQuery(String.format("""
@@ -58,7 +69,7 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
                 """, namedParameters.get("vector_index"), namedParameters.get("vector_value"),namedParameters.getOrDefault("k","10")));
 
         SearchRequest searchRequest = new SearchRequest();
-        searchRequest.source(new SearchSourceBuilder().query(queryBuilder).postFilter(getSecurityFilter()).minScore(0.5f));
+        searchRequest.source(new SearchSourceBuilder().query(queryBuilder).postFilter(getSecurityFilter()).minScore(minScore));
 
         ElasticSearchAdmin esa = Framework.getService(ElasticSearchAdmin.class);
         ESClient client = esa.getClient();
@@ -97,5 +108,9 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
                 .mustNot(QueryBuilders.termsQuery(ACL_FIELD, UNSUPPORTED_ACL));
     }
 
+    protected DocumentModelList getEmptyResult() {
+        setResultsCount(0);
+        return new DocumentModelListImpl();
+    }
 
 }
