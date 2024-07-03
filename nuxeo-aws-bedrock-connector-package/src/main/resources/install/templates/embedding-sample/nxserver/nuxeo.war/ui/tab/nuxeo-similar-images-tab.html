@@ -14,8 +14,8 @@
       }
     </style>
     
-    <nuxeo-similar-images document="[[document]]" visible="[[visible]]" provider-name="vector-search"
-                          search-property="embedding_image" search-value="[[searchValue]]">
+    <nuxeo-similar-images document="[[document]]" visible="[[visible]]" provider-name="simple-vector-search"
+                          search-property="embedding:image" search-value="[[searchValue]]">
     </nuxeo-similar-images>
     
   </template>
@@ -42,7 +42,7 @@
         if (!visible || !document || !document.properties['embedding:image']) {
           return;
         }
-        return btoa(document.properties['embedding:image'].join(','));
+        return JSON.stringify(document.properties['embedding:image']);
       }
       
     });
