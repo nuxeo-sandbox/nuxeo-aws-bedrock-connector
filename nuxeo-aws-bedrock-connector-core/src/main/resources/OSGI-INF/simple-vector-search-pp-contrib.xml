@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.aws.bedrock.pp.contrib">
+
+    <require>org.nuxeo.ecm.core.CoreExtensions</require>
+
+    <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+        <schema name="simple-vector-search_pp" prefix="simple-vector-search_pp" src="schemas/simple-vector-search.xsd"/>
+    </extension>
+
+    <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+        <doctype name="simple-vector-search_pp" extends="Document">
+            <facet name="ContentViewDisplay"/>
+            <facet name="SavedSearch"/>
+            <facet name="HiddenInNavigation"/>
+            <schema name="simple-vector-search_pp"/>
+        </doctype>
+    </extension>
+
+    <extension point="providers" target="org.nuxeo.ecm.platform.query.api.PageProviderService">
+
+        <genericPageProvider class="org.nuxeo.labs.aws.bedrock.search.pp.VectorSearchPageProvider"
+                             name="simple-vector-search">
+            <trackUsage>false</trackUsage>
+            <property name="coreSession">#{documentManager}</property>
+            <whereClause>
+                <predicate parameter="embedding:vector" operator="=">
+                    <field schema="simple-vector-search_pp" name="vector"/>
+                </predicate>
+            </whereClause>
+            <searchDocumentType>simple-vector-search_pp</searchDocumentType>
+            <pageSize>10</pageSize>
+        </genericPageProvider>
+    </extension>
+
+</component>
