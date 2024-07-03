@@ -238,9 +238,8 @@
     },
 
     _computeParams: function(document) {
-      let params;
+      let params = {};
       if (document) {
-        params = {};
         if (this.searchValue) {
           params[this.searchProperty] = this.searchValue;
         } else {
@@ -249,19 +248,7 @@
         params['system_isTrashed'] = this.isTrashed(document);
       }
       return params;
-    },
-
-    _computeSortOptions() {
-      return [
-        { field: 'dc:title', label: this.i18n('searchResults.sort.field.title'), order: 'asc' },
-        { field: 'dc:created', label: this.i18n('searchResults.sort.field.created'), order: 'asc', selected: true },
-        { field: 'dc:creator', label: this.i18n('documentContentView.datatable.header.author'), order: 'asc' },
-        { field: 'dc:modified', label: this.i18n('searchResults.sort.field.modified'), order: 'desc' },
-        { field: 'dc:lastContributor', label: this.i18n('searchResults.sort.field.lastContributor'), order: 'asc' },
-        { field: 'state', label: this.i18n('searchResults.sort.field.state'), order: 'asc' },
-        { field: 'dc:expired', label: this.i18n('label.dublincore.expire'), order: 'asc' }
-      ];
-    },
+    }
 
   });
   </script>
