@@ -32,13 +32,10 @@ public class TestVectorSearchPageProvider {
     @Test(expected = NuxeoException.class)
     public void testPP() {
         PageProviderDefinition def = PageProviderHelper.getPageProviderDefinition("simple-vector-search");
-
         HashMap<String,String> namedParameters = new HashMap<>();
-        namedParameters.put("embedding_index", "embedding");
-        namedParameters.put("embedding_vector", Arrays.toString(new double[]{1.0,2.0}));
-
+        namedParameters.put("vector_index", "embedding");
+        namedParameters.put("vector_value", Arrays.toString(new double[]{1.0,2.0}));
         PageProvider<?> pp = PageProviderHelper.getPageProvider(session, def, namedParameters);
-
         pp.getCurrentPage();
     }
 
