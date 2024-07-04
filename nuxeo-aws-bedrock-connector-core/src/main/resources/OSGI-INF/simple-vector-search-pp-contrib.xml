@@ -9,6 +9,9 @@
                              name="simple-vector-search">
             <trackUsage>false</trackUsage>
             <property name="coreSession">#{documentManager}</property>
+            <whereClause>
+                <fixedPart>ecm:mixinType != 'HiddenInNavigation' AND ecm:isVersion = 0 AND ecm:isTrashed = 0</fixedPart>
+            </whereClause>
             <pageSize>10</pageSize>
         </genericPageProvider>
     </extension>

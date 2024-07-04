@@ -116,6 +116,34 @@
             }]]>
             </script>
         </scriptedOperation>
+
+        <scriptedOperation id="javascript.text2embedding">
+            <inputType>void</inputType>
+            <outputType>void</outputType>
+            <category>javascript</category>
+            <param name="input_text" type="String"/>
+            <description></description>
+            <script>
+                <![CDATA[function run(input, params) {
+                  var payload = {
+                    "inputText": params.input_text,
+                    "embeddingConfig": {
+                     "outputEmbeddingLength": 1024
+                     }
+                  };
+
+                  var responseBlob = Bedrock.Invoke(null, {
+                    'jsonPayload': JSON.stringify(payload),
+                    'modelName': 'amazon.titan-embed-image-v1'
+                  });
+
+                  var response = JSON.parse(responseBlob.getString());
+
+                  return JSON.stringify(response.embedding);
+            }]]>
+            </script>
+        </scriptedOperation>
+
     </extension>
 
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="event-handlers">
