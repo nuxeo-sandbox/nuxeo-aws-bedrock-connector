@@ -9,6 +9,19 @@ Should you wish to add custom code, we recommend using the aws-bedrock-sample-cu
 -->
 <link rel="import" href="tab/nuxeo-similar-images-tab.html">
 
+<!-- Contribution of element 'nuxeo-menu-icon' for slot 'DRAWER_ITEMS' -->
+<nuxeo-slot-content name="Find" slot="DRAWER_ITEMS" order="1">
+    <template>
+        <nuxeo-menu-icon name="find" label="Find" icon="icons:info-outline"></nuxeo-menu-icon>
+    </template>
+</nuxeo-slot-content>
+<!-- Contribution of element 'nuxeo-search-form' for slot 'DRAWER_PAGES' -->
+<nuxeo-slot-content name="Find" slot="DRAWER_PAGES">
+    <template>
+        <nuxeo-search-form provider="simple-vector-search" schemas="dublincore" search-name="embedding-search" name="find"></nuxeo-search-form>
+    </template>
+</nuxeo-slot-content>
+
 <!-- Contribution of element 'nuxeo-operation-button' for slot 'DOCUMENT_ACTIONS' -->
 <nuxeo-slot-content name="getPictureDescription" slot="DOCUMENT_ACTIONS" order="1">
     <template>

@@ -94,7 +94,7 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
             }
         }
 
-        float minScore = Float.parseFloat(namedParameters.getOrDefault("min_score", "0.5"));
+        float minScore = Float.parseFloat(namedParameters.getOrDefault("min_score", "0.4"));
 
         if (StringUtils.isBlank(index) || StringUtils.isBlank(vector)) {
             return getEmptyResult();
