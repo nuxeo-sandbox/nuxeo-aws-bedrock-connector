@@ -29,6 +29,8 @@ import static org.nuxeo.ecm.platform.query.api.PageProviderService.NAMED_PARAMET
 
 public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
 
+    public static final String RELEVANCE_SCORE = "relevance_score";
+
     private static final Logger log = LogManager.getLogger(VectorSearchPageProvider.class);
 
     @Override
@@ -126,8 +128,11 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
         //reorder using relevance
         List<DocumentModel> result = new ArrayList<>();
         for (SearchHit hit : hits.getHits()) {
-            Optional<DocumentModel> document = documents.stream().filter(doc -> doc.getId().equals(hit.getId())).findFirst();
-            document.ifPresent(result::add);
+            Optional<DocumentModel> documentOpt = documents.stream().filter(doc -> doc.getId().equals(hit.getId())).findFirst();
+            documentOpt.ifPresent(doc -> {
+                doc.putContextData(RELEVANCE_SCORE,hit.getScore());
+                result.add(doc);
+            });
         }
 
         currentPageDocuments = result;
