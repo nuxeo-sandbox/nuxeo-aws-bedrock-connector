@@ -34,8 +34,6 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
     @Override
     public List<DocumentModel> getCurrentPage() {
 
-        long t0 = System.currentTimeMillis();
-
         // use a cache
         if (currentPageDocuments != null) {
             return currentPageDocuments;
