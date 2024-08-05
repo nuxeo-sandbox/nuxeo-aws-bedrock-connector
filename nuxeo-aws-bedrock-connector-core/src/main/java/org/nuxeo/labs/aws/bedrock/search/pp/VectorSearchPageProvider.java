@@ -8,18 +8,25 @@ import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
-import org.nuxeo.ecm.platform.query.nxql.CoreQueryDocumentPageProvider;
+import org.nuxeo.ecm.platform.query.api.Aggregate;
+import org.nuxeo.ecm.platform.query.api.Bucket;
+import org.nuxeo.elasticsearch.aggregate.AggregateEsBase;
 import org.nuxeo.elasticsearch.api.ESClient;
 import org.nuxeo.elasticsearch.api.ElasticSearchAdmin;
 import org.nuxeo.elasticsearch.fetcher.VcsFetcher;
+import org.nuxeo.elasticsearch.provider.ElasticSearchNxqlPageProvider;
 import org.nuxeo.elasticsearch.query.NxQueryBuilder;
 import org.nuxeo.runtime.api.Framework;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.SearchHit;
 import org.opensearch.search.SearchHits;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.Aggregation;
+import org.opensearch.search.aggregations.bucket.filter.Filter;
 import org.opensearch.search.builder.SearchSourceBuilder;
 
 import java.util.*;
@@ -27,7 +34,7 @@ import java.util.*;
 import static org.nuxeo.ecm.platform.query.api.PageProviderService.NAMED_PARAMETERS;
 
 
-public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
+public class VectorSearchPageProvider extends ElasticSearchNxqlPageProvider {
 
     public static final String RELEVANCE_SCORE = "relevance_score";
 
@@ -52,7 +59,8 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
             throw new NuxeoException(String.format("Cannot perform null query: check provider '%s'", getName()));
         }
 
-        NxQueryBuilder nxQuery = new NxQueryBuilder(coreSession).nxql(query);
+        NxQueryBuilder nxQuery = new NxQueryBuilder(coreSession).nxql(query).addAggregates(buildAggregates());
+        ;
 
         DocumentModel searchDoc = getSearchDocumentModel();
 
@@ -112,7 +120,29 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
                 """, namedParameters.get("vector_index"), vector, namedParameters.getOrDefault("k", "10")));
 
         SearchRequest searchRequest = new SearchRequest();
-        searchRequest.source(new SearchSourceBuilder().query(queryBuilder).postFilter(nxQuery.makeQuery()).minScore(minScore));
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().query(queryBuilder)
+                .from(nxQuery.getOffset()).minScore(minScore);
+
+        //build nxql post filter
+        QueryBuilder nxqlPostFilter = nxQuery.makeQuery();
+
+        //build aggregate post filter
+        QueryBuilder aggregatePostFilter = getAggregateFilter(nxQuery);
+
+        BoolQueryBuilder postFilter = QueryBuilders.boolQuery().must(nxqlPostFilter);
+
+        if (aggregatePostFilter != null) {
+            postFilter.must(aggregatePostFilter);
+        }
+
+        searchSourceBuilder.postFilter(postFilter);
+
+        //add aggregates
+        for (AbstractAggregationBuilder<?> aggregate : nxQuery.getEsAggregates()) {
+            searchSourceBuilder.aggregation(aggregate);
+        }
+
+        searchRequest.source(searchSourceBuilder);
 
         ElasticSearchAdmin esa = Framework.getService(ElasticSearchAdmin.class);
         ESClient client = esa.getClient();
@@ -137,15 +167,51 @@ public class VectorSearchPageProvider extends CoreQueryDocumentPageProvider {
 
         currentPageDocuments = result;
 
+        currentAggregates = new HashMap<>(getResultAggregates(nxQuery, response).size());
+        for (Aggregate<Bucket> agg : getResultAggregates(nxQuery, response)) {
+            currentAggregates.put(agg.getId(), agg);
+        }
+
         // set total number of hits
         setResultsCount(result.size());
 
         return result;
     }
 
-    protected DocumentModelList getEmptyResult() {
+    public DocumentModelList getEmptyResult() {
         setResultsCount(0);
         return new DocumentModelListImpl();
+    }
+
+    public List<Aggregate<Bucket>> getResultAggregates(NxQueryBuilder queryBuilder, SearchResponse response) {
+        for (AggregateEsBase<Aggregation, Bucket> agg : queryBuilder.getAggregates()) {
+            Filter filter = response.getAggregations().get(NxQueryBuilder.getAggregateFilterId(agg));
+            if (filter == null) {
+                continue;
+            }
+            Aggregation aggregation = filter.getAggregations().get(agg.getId());
+            if (aggregation == null) {
+                continue;
+            }
+            agg.parseAggregation(aggregation);
+        }
+        @SuppressWarnings("unchecked")
+        List<Aggregate<Bucket>> ret = (List<Aggregate<Bucket>>) (List<?>) queryBuilder.getAggregates();
+        return ret;
+    }
+
+    public QueryBuilder getAggregateFilter(NxQueryBuilder builder) {
+        BoolQueryBuilder ret = QueryBuilders.boolQuery();
+        for (AggregateEsBase<?, ?> agg : builder.getAggregates()) {
+            QueryBuilder filter = agg.getEsFilter();
+            if (filter != null) {
+                ret.must(filter);
+            }
+        }
+        if (!ret.hasClauses()) {
+            return null;
+        }
+        return ret;
     }
 
 }
