@@ -47,6 +47,27 @@ public class VectorSearchPageProvider extends ElasticSearchNxqlPageProvider {
         if (currentPageDocuments != null) {
             return currentPageDocuments;
         }
+
+        //fallback to default implementation if there is no vector search
+        DocumentModel searchDoc = getSearchDocumentModel();
+        if (searchDoc == null) {
+            return getEmptyResult();
+        }
+
+        Map<String, String> namedParameters = (Map<String, String>) searchDoc.getContextData(NAMED_PARAMETERS);
+        if (namedParameters == null) {
+            return super.getCurrentPage();
+        }
+
+        String index = namedParameters.get("vector_index");
+        String vector = namedParameters.get("vector_value");
+        String inputText = namedParameters.get("input_text");
+        if (index == null && vector == null && inputText == null) {
+            return super.getCurrentPage();
+        }
+
+        // proceed with vector search implementation
+
         error = null;
         errorMessage = null;
 
@@ -60,26 +81,9 @@ public class VectorSearchPageProvider extends ElasticSearchNxqlPageProvider {
         }
 
         NxQueryBuilder nxQuery = new NxQueryBuilder(coreSession).nxql(query).addAggregates(buildAggregates());
-        ;
-
-        DocumentModel searchDoc = getSearchDocumentModel();
-
-        if (searchDoc == null) {
-            return getEmptyResult();
-        }
-
-        Map<String, String> namedParameters = (Map<String, String>) searchDoc.getContextData(NAMED_PARAMETERS);
-
-        if (namedParameters == null) {
-            return getEmptyResult();
-        }
-
-        String index = namedParameters.get("vector_index");
-        String vector = namedParameters.get("vector_value");
 
         if (StringUtils.isBlank(vector)) {
             //get text input and create embedding
-            String inputText = namedParameters.get("input_text");
             if (StringUtils.isBlank(inputText)) {
                 return getEmptyResult();
             }
