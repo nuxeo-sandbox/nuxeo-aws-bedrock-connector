@@ -18,10 +18,11 @@ The operation `Bedrock.Invoke` invokes the Bedrock API
 
 Parameters:
 
-| Name        | Description                                 | Type            | Required | Default value |
-|:------------|:--------------------------------------------|:----------------|:---------|:--------------|
-| modelName   | The model technical name                    | string          | true     |               |
-| jsonPayload | The json payload corresponding to the model | string          | true     |               |
+| Name        | Description                                 | Type    | Required | Default value |
+|:------------|:--------------------------------------------|:--------|:---------|:--------------|
+| modelName   | The model technical name                    | string  | true     |               |
+| jsonPayload | The json payload corresponding to the model | string  | true     |               |
+| useCache    | Use cached response                         | boolean | false    | false         |
 
 Output: A string Blob containing the Bedrock REST API JSON response
 
