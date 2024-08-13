@@ -1,14 +1,19 @@
 package org.nuxeo.labs.aws.bedrock;
 
 import static org.junit.Assert.assertNotNull;
+import static org.nuxeo.labs.aws.bedrock.service.AWSBedrockServiceImpl.BEDROCK_CACHE;
+import static org.nuxeo.labs.aws.bedrock.service.AWSBedrockServiceImpl.getCacheKey;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nuxeo.ecm.core.cache.Cache;
+import org.nuxeo.ecm.core.cache.CacheService;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.labs.aws.bedrock.service.AWSBedrockService;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -41,8 +46,8 @@ public class TestAWSBedrockService {
                     "inputText":"This some sample text"
                 }"
                 """;
-        InvokeModelResponse response = awsbedrockservice.invoke(titanModelId, payload);
-        JSONObject responseBody = new JSONObject(response.body().asUtf8String());
+        String response = awsbedrockservice.invoke(titanModelId, payload);
+        JSONObject responseBody = new JSONObject(response);
         double[] embeddings = responseBody.getJSONArray("embedding")
                 .toList().stream().mapToDouble(v -> ((BigDecimal) v).doubleValue()).toArray();
         Assert.assertNotNull(embeddings);
@@ -61,12 +66,49 @@ public class TestAWSBedrockService {
                     "inputImage": "%s"
                 }
                 """, encodedString);
-        InvokeModelResponse response = awsbedrockservice.invoke(titanModelId, payload);
-        JSONObject responseBody = new JSONObject(response.body().asUtf8String());
+        String response = awsbedrockservice.invoke(titanModelId, payload);
+        JSONObject responseBody = new JSONObject(response);
         double[] embeddings = responseBody.getJSONArray("embedding")
                 .toList().stream().mapToDouble(v -> ((BigDecimal) v).doubleValue()).toArray();
         Assert.assertNotNull(embeddings);
         Assert.assertEquals(embeddings.length, 1024);
+    }
+
+    @Test
+    public void testResponseCaching() {
+        String titanModelId = "amazon.titan-embed-text-v2:0";
+        String payload = """
+                {
+                    "inputText":"This some sample text"
+                }"
+                """;
+        String response = awsbedrockservice.invoke(titanModelId, payload, true);
+        Assert.assertNotNull(response);
+
+        CacheService cacheService = Framework.getService(CacheService.class);
+        Cache cache = cacheService.getCache(BEDROCK_CACHE);
+        Assert.assertTrue(cache.hasEntry(getCacheKey(titanModelId,payload)));
+    }
+
+    @Test
+    public void testCacheHit() {
+        String modelId = "the model that don't exist yet";
+        String payload = """
+                {
+                    "inputText":"Let's see some magic"
+                }"
+                """;
+
+        String cachedResponse = "123";
+
+        CacheService cacheService = Framework.getService(CacheService.class);
+        Cache cache = cacheService.getCache(BEDROCK_CACHE);
+        cache.put(getCacheKey(modelId,payload),cachedResponse);
+
+        String response = awsbedrockservice.invoke(modelId, payload, true);
+        Assert.assertEquals(cachedResponse, response);
+
+
     }
 
 }

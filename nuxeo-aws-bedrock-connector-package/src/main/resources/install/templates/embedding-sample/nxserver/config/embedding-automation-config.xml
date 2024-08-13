@@ -27,7 +27,8 @@
 
                       var responseBlob = Bedrock.Invoke(null, {
                         'jsonPayload': JSON.stringify(payload),
-                        'modelName': 'amazon.titan-embed-image-v1'
+                        'modelName': 'amazon.titan-embed-image-v1',
+                        'useCache': true
                       });
 
                       var response = JSON.parse(responseBlob.getString());

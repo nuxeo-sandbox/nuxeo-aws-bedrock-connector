@@ -4,6 +4,8 @@ import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
 
 public interface AWSBedrockService {
 
-    InvokeModelResponse invoke(String modelName, String jsonPayload);
+    String invoke(String modelName, String jsonPayload);
+
+    String invoke(String modelName, String jsonPayload, boolean useCache);
 
 }
