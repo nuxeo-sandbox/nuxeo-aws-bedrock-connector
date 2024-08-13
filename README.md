@@ -40,6 +40,99 @@ curl --location 'http://localhost:8080/nuxeo/api/v1/automation/Bedrock.Invoke' \
 }'
 ```
 
+## Vector Search
+Vector search enables use cases such as semantic search and RAG.
+A [sample configuration template](./nuxeo-aws-bedrock-connector-package/src/main/resources/install/templates/embedding-sample) is provided in this plugin 
+
+### Configuration
+This feature is implemented only for OpenSearch 1.3.x. In order to use the feature, knn must be enabled at the index level. This can only be done with a package configuration template.
+A sample index configuration is available [here](./nuxeo-aws-bedrock-connector-package/src/main/resources/install/templates/opensearch-knn/nxserver/config/elasticsearch-doc-settings.json.nxftl)
+
+Vector fields must be explicitly declared in the index mapping. The dimension must correspond to the embbedings size.
+
+```json
+{
+  "embedding:text": {
+    "type": "knn_vector",
+    "dimension": 1024
+  },
+  "embedding:image": {
+    "type": "knn_vector",
+    "dimension": 1024,
+    "method": {
+      "name": "hnsw",
+      "space_type": "l2",
+      "engine": "nmslib",
+      "parameters": {
+        "ef_construction": 128,
+        "m": 24
+      }
+    }
+  }
+}
+```
+This can be done by overriding the whole mapping configuration in a package configuration template or by using Nuxeo Studio.
+
+### Embedding generation
+
+Embbedings can be generated using event handlers and automation scripts. Below is an example of generating embeddings for images using AWS Titan multimodal model
+
+```js
+function run(input, params) {
+
+  var blob = Picture.GetView(input, {
+    'viewName': 'FullHD'
+  });
+
+  var base64 = Base64Helper.blob2Base64(blob);
+
+  var payload = {
+    "inputImage": base64,
+    "embeddingConfig": {
+     "outputEmbeddingLength": 1024
+     }
+  };
+
+  var responseBlob = Bedrock.Invoke(null, {
+    'jsonPayload': JSON.stringify(payload),
+    'modelName': 'amazon.titan-embed-image-v1',
+    'useCache': true
+  });
+
+  var response = JSON.parse(responseBlob.getString());
+
+  input['embedding:image'] = response.embedding;
+
+  input = Document.Save(input, {});
+
+  return input;
+}
+```
+
+### Vector Search
+This plugin includes [an implementation of the pageprovider](./nuxeo-aws-bedrock-connector-core/src/main/java/org/nuxeo/labs/aws/bedrock/search/pp/VectorSearchPageProvider.java) interface that bring vector search capabilities to the Nuxeo search API. 
+The pageprovider exposes several named parameters:
+
+| Named Parameter                | Description                                                                      | Type    | Required | Default value |
+|:-------------------------------|:---------------------------------------------------------------------------------|:--------|:---------|:--------------|
+| vector_index                   | The vector field name to use for search                                          | string  | true     |               |
+| vector_value                   | The input vector                                                                 | string  | false    |               |
+| input_text                     | A text string can be passed instead of a vector                                  | string  | false    |               |
+| embedding_automation_processor | The automation chain/script to use to convert `input_text` to a vector embedding | boolean | false    |               |
+| k                              | The k value for knn                                                              | integer | false    | 10            |
+| min_score                      | The min_score for results the a hit must satisfied                               | float   | false    | 0.4           |
+
+The search input is either `vector_value` or the combination `input_text` and `embedding_automation_processor`. 
+For the latter, the model used to generate the embedding must be same as the model used to generate the embedding vector for `vector_index`
+
+Here's an example of call
+
+```curl
+curl 'http://localhost:8080/nuxeo/api/v1/search/pp/simple-vector-search/execute?input_text=japanese%20kei%20car&vector_index=embedding%3Aimage&embedding_automation_processor=javascript.text2embedding&k=10' \
+  -H 'Content-Type: application/json' \
+  -H 'accept: text/plain,application/json, application/json' \
+```
+
 # How to run
 ## Configuration
 The following nuxeo.conf properties are available to configure the plugin
