@@ -123,7 +123,7 @@ The pageprovider exposes several named parameters:
 | min_score                      | The min_score for results the a hit must satisfied                               | float   | false    | 0.4           |
 
 The search input is either `vector_value` or the combination `input_text` and `embedding_automation_processor`. 
-For the latter, the model used to generate the embedding must be same as the model used to generate the embedding vector for `vector_index`
+For the latter, the model used to generate the embedding must be same as the model used to generate the embedding vectors for `vector_index`
 
 Here's an example of call
 
