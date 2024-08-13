@@ -29,7 +29,7 @@ services:
       - os_data:/usr/share/opensearch/data
 
   nuxeo:
-    image: nuxeo-aws-bedrock-connector:2023.2.0-SNAPSHOT
+    image: nuxeo-aws-bedrock-connector:2023.3.0-SNAPSHOT
     env_file:
       - ./.env
     ports:
