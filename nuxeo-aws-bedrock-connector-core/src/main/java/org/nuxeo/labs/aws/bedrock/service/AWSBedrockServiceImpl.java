@@ -17,24 +17,7 @@ public class AWSBedrockServiceImpl extends DefaultComponent implements AWSBedroc
     public static final String BEDROCK_CACHE = "bedrock_cache";
 
     public String invoke(String modelName, String jsonPayload) {
-
-        String region = Framework.getProperty("nuxeo.aws.bedrock.region");
-
-        try (BedrockRuntimeClient client = BedrockRuntimeClient.builder()
-                .region(region != null ? Region.of(region) : null)
-                .credentialsProvider(DefaultCredentialsProvider.create())
-                .build()) {
-
-            InvokeModelRequest request = InvokeModelRequest.builder()
-                    .body(SdkBytes.fromUtf8String(jsonPayload))
-                    .modelId(modelName)
-                    .contentType("application/json")
-                    .accept("application/json")
-                    .build();
-
-            return client.invokeModel(request).body().asUtf8String();
-
-        }
+        return invoke(modelName,jsonPayload,false);
     }
 
     public String invoke(String modelName, String jsonPayload, boolean useCache) {
