@@ -14,7 +14,9 @@ mvn clean install -DskipTests
 The integration between the Nuxeo Platform and Bedrock is meant to be as versatile as possible and leverages Nuxeo's automation framework.
 
 ### Run Execution
-The operation `Bedrock.Invoke` invokes the Bedrock API 
+
+#### • `Bedrock.Invoke` Operation
+The operation `Bedrock.Invoke` invokes the Bedrock API.
 
 Parameters:
 
@@ -24,7 +26,7 @@ Parameters:
 | jsonPayload | The json payload corresponding to the model | string  | true     |               |
 | useCache    | Use cached response                         | boolean | false    | false         |
 
-Output: A string Blob containing the Bedrock REST API JSON response
+Output: A string Blob containing the Bedrock REST API JSON response. Use its `getString()` method to get the JSON String (see Automation Scripting example below)
 
 Example on localhost:
 
@@ -39,6 +41,65 @@ curl --location 'http://localhost:8080/nuxeo/api/v1/automation/Bedrock.Invoke' \
     }
 }'
 ```
+
+#### • `Base64Helper` Automation Helper
+
+The plugin also provides the `Base64Helper` Automation Helper, that allows for creating the Base64 representation of a blob or a String:
+
+* `Base64Helper.blob2Base64(aBlob)`
+* `Base64Helper.string2Base64(aString)`
+
+(See Automation Script example below)
+
+### Automation Script Example: Describe an Image
+
+```js
+function run(input, params) {
+  // Get a rendition (don't send a 300MB Photoshop))
+  var blob = Picture.GetView(input, {'viewName': 'FullHD'});
+  // Encode with the helper
+  var base64 = Base64Helper.blob2Base64(blob);
+  // Prepare the call to Bedrock
+  var payload = {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "image",
+            "source": {
+              "type": "base64",
+              "media_type": "image/jpeg",
+              "data": base64
+            }
+          },
+          {
+            "type": "text",
+            "text": "Describe the content of the image"
+          }
+        ]
+      }
+    ],
+    "max_tokens": 512,
+    "anthropic_version": "bedrock-2023-05-31"
+  };
+  // Call the operation
+  var responseBlob = Bedrock.Invoke(null, {
+    'jsonPayload': JSON.stringify(payload),
+    'modelName': "anthropic.claude-3-sonnet-20240229-v1:0"
+  });
+  // Get the result
+  var response = JSON.parse(responseBlob.getString());
+  input["dc:description"] = response.content[0].text;
+  
+  input = Document.Save(input, {});
+
+  return input;
+}
+```
+
+The prompt could be parametrized. "Describe shortly the content of the image". And/or in another language "Décris de façon succinte le contenu de l'image", etc. The model used (here, `anthropic.claude-3-sonnet-20240229-v1:0`, also could be parametrized in the chain.)
+
 
 ## Vector Search
 Vector search enables use cases such as semantic search and RAG.
