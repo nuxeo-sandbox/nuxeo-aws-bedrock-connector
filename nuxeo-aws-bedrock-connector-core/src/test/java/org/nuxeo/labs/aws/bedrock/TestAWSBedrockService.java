@@ -19,7 +19,7 @@ import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
