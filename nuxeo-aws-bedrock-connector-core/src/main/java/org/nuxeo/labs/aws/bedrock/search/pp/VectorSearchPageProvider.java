@@ -11,12 +11,12 @@ import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.platform.query.api.Aggregate;
 import org.nuxeo.ecm.platform.query.api.Bucket;
 import org.nuxeo.elasticsearch.aggregate.AggregateEsBase;
-import org.nuxeo.elasticsearch.api.ESClient;
 import org.nuxeo.elasticsearch.api.ElasticSearchAdmin;
 import org.nuxeo.elasticsearch.fetcher.VcsFetcher;
 import org.nuxeo.elasticsearch.provider.ElasticSearchNxqlPageProvider;
 import org.nuxeo.elasticsearch.query.NxQueryBuilder;
 import org.nuxeo.runtime.api.Framework;
+import org.nuxeo.runtime.opensearch1.client.OpenSearchClient;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.index.query.BoolQueryBuilder;
@@ -149,7 +149,7 @@ public class VectorSearchPageProvider extends ElasticSearchNxqlPageProvider {
         searchRequest.source(searchSourceBuilder);
 
         ElasticSearchAdmin esa = Framework.getService(ElasticSearchAdmin.class);
-        ESClient client = esa.getClient();
+        OpenSearchClient client = esa.getClient();
 
         SearchResponse response = client.search(searchRequest);
 

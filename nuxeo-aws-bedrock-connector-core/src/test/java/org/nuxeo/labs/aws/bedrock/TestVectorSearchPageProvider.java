@@ -13,6 +13,7 @@ import org.nuxeo.ecm.platform.query.api.PageProvider;
 import org.nuxeo.ecm.platform.query.api.PageProviderDefinition;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.elasticsearch.test.RepositoryElasticSearchFeature;
+import org.nuxeo.runtime.RuntimeServiceException;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -41,7 +42,7 @@ public class TestVectorSearchPageProvider {
         try {
             pp.getCurrentPage();
             Assert.fail("Knn should have failed");
-        } catch (NuxeoException e) {
+        } catch (RuntimeServiceException e) {
             Throwable t = e.getCause();
             Assert.assertTrue(t instanceof OpenSearchStatusException);
             Assert.assertTrue(t.getMessage().contains("reason=unknown query [knn]"));
