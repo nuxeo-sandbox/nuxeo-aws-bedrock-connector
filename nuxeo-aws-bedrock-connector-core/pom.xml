@@ -9,10 +9,6 @@
     <name>Nuxeo aws bedrock connector core</name>
     <description/>
 
-    <properties>
-        <aws.sdk.version>2.25.64</aws.sdk.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.nuxeo.runtime</groupId>
@@ -41,6 +37,7 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>bedrockruntime</artifactId>
+            <version>${aws.version}</version>
         </dependency>
 
         <dependency>
@@ -62,18 +59,20 @@
             <scope>test</scope>
         </dependency>
 
-    </dependencies>
+        <dependency>
+            <groupId>org.nuxeo.runtime</groupId>
+            <artifactId>nuxeo-runtime-opensearch1</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>bom</artifactId>
-                <version>${aws.sdk.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <dependency>
+            <groupId>org.nuxeo.runtime</groupId>
+            <artifactId>nuxeo-runtime-opensearch1-embed</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>
