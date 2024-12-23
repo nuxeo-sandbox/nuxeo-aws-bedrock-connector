@@ -2,6 +2,7 @@ package org.nuxeo.labs.aws.bedrock;
 
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -34,6 +35,7 @@ public class TestAWSBedrockInvokeOp {
 
     @Test
     public void testSuccess() throws OperationException, IOException {
+        Assume.assumeTrue(AwsCredentialChecker.isSet());
         OperationContext ctx = new OperationContext(session);
         Map<String, Object> params = new HashMap<>();
         params.put("modelName","amazon.titan-embed-text-v2:0");
