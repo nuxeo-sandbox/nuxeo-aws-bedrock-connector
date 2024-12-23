@@ -7,6 +7,7 @@ import static org.nuxeo.labs.aws.bedrock.service.AWSBedrockServiceImpl.getCacheK
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.cache.Cache;
@@ -17,7 +18,6 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
-import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -40,6 +40,7 @@ public class TestAWSBedrockService {
 
     @Test
     public void testGetTextEmbeddings() {
+        Assume.assumeTrue(AwsCredentialChecker.isSet());
         String titanModelId = "amazon.titan-embed-text-v2:0";
         String payload = """
                 {
@@ -56,6 +57,7 @@ public class TestAWSBedrockService {
 
     @Test
     public void testGetImageEmbeddings() throws IOException {
+        Assume.assumeTrue(AwsCredentialChecker.isSet());
         byte[] fileContent = FileUtils.readFileToByteArray(new File(getClass().getResource("/files/musubimaru.png").getPath()));
         String encodedString = Base64.getEncoder().encodeToString(fileContent);
 
@@ -76,6 +78,7 @@ public class TestAWSBedrockService {
 
     @Test
     public void testResponseCaching() {
+        Assume.assumeTrue(AwsCredentialChecker.isSet());
         String titanModelId = "amazon.titan-embed-text-v2:0";
         String payload = """
                 {
@@ -92,6 +95,7 @@ public class TestAWSBedrockService {
 
     @Test
     public void testCacheHit() {
+        Assume.assumeTrue(AwsCredentialChecker.isSet());
         String modelId = "the model that don't exist yet";
         String payload = """
                 {
@@ -107,8 +111,6 @@ public class TestAWSBedrockService {
 
         String response = awsbedrockservice.invoke(modelId, payload, true);
         Assert.assertEquals(cachedResponse, response);
-
-
     }
 
 }
