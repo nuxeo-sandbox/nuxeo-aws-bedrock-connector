@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-parent</artifactId>
-    <version>2025.0.102</version>
+    <version>2025.0.106</version>
   </parent>
   <groupId>org.nuxeo.labs.aws.bedrock</groupId>
   <artifactId>nuxeo-aws-bedrock-connector-parent</artifactId>
@@ -16,6 +16,7 @@
     <nuxeo.skip.enforcer>true</nuxeo.skip.enforcer>
     <nuxeo.target.version>2025.*</nuxeo.target.version>
     <skipDocker>false</skipDocker>
+    <pushReleaseChanges>false</pushReleaseChanges>
   </properties>
   <modules>
     <module>nuxeo-aws-bedrock-connector-core</module>
@@ -100,7 +101,15 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <scmReleaseCommitComment>Release @{releaseLabel}</scmReleaseCommitComment>
           <scmDevelopmentCommitComment>Post Release @{releaseLabel}</scmDevelopmentCommitComment>
-          <pushChanges>false</pushChanges>
+          <pushChanges>${pushReleaseChanges}</pushChanges>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.18.0</version>
+        <configuration>
+          <ruleSet/>
         </configuration>
       </plugin>
     </plugins>
