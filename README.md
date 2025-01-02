@@ -109,7 +109,10 @@ A [sample configuration template](./nuxeo-aws-bedrock-connector-package/src/main
 This feature is implemented only for OpenSearch 1.3.x. In order to use the feature, knn must be enabled at the index level. This can only be done with a package configuration template.
 A sample index configuration is available [here](./nuxeo-aws-bedrock-connector-package/src/main/resources/install/templates/opensearch-knn/nxserver/config/elasticsearch-doc-settings.json.nxftl)
 
-Vector fields must be explicitly declared in the index mapping. The dimension must correspond to the embbedings size.
+Vector fields must be explicitly declared in the index mapping.
+
+> [!IMPORTANT]
+> The `dimension` property must correspond to the embbedings size (see below, "Embedding generation")
 
 ```json
 {
@@ -136,7 +139,7 @@ This can be done by overriding the whole mapping configuration in a package conf
 
 ### Embedding generation
 
-Embbedings can be generated using event handlers and automation scripts. Below is an example of generating embeddings for images using AWS Titan multimodal model
+Embbedings can be generated using event handlers and automation scripts. Below is an example of generating embeddings for images using AWS Titan multimodal model.
 
 ```js
 function run(input, params) {
@@ -147,6 +150,7 @@ function run(input, params) {
 
   var base64 = Base64Helper.blob2Base64(blob);
 
+  // Notice the outputEmbeddingLength of 1024, matching the "dimension" property of the index
   var payload = {
     "inputImage": base64,
     "embeddingConfig": {
