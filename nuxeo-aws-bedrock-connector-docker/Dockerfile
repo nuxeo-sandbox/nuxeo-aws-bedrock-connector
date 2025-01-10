@@ -21,20 +21,14 @@ ENV LANG="en_US.UTF-8" \
     LANGUAGE="en_US:en" \
     LC_ALL="en_US.UTF-8"
 
-# Install FFmpeg, mediainfo and codecs
-RUN dnf config-manager --set-enabled crb && dnf -y install epel-release && \
-    dnf -y install https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-9.noarch.rpm && \
-    dnf -y install mediainfo ffmpeg x264 x265 opus flac libvpx && dnf --enablerepo=crb -y install libvorbis-devel
+# Install repos
+RUN dnf -y install epel-release && dnf -y install https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-9.noarch.rpm && \
+    dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 
-# Install Fonts
-RUN dnf -y install google-noto-sans-cjk-jp-fonts
+RUN dnf config-manager --enable ol9_codeready_builder
 
-# Install newest version of imagemagick and icc color profiles
- RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm \
-    && dnf --enablerepo=remi -y install ImageMagick7
-
-#Install codecs for Imagemagick
-RUN dnf -y install librsvg2-tools && dnf --enablerepo=devel -y install libwebp-tools
+#Install latest Imagemagick and codecs
+RUN dnf -y install librsvg2-tools libwebp-tools
 
 # Set back original (nuxeo) user
 USER 900
