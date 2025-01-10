@@ -118,7 +118,16 @@ Vector fields must be explicitly declared in the index mapping.
 {
   "embedding:text": {
     "type": "knn_vector",
-    "dimension": 1024
+    "dimension": 1024,
+    "method": {
+      "name": "hnsw",
+      "space_type": "l2",
+      "engine": "nmslib",
+      "parameters": {
+        "ef_construction": 128,
+        "m": 24
+      }
+    }
   },
   "embedding:image": {
     "type": "knn_vector",
@@ -206,6 +215,35 @@ The following nuxeo.conf properties are available to configure the plugin
 |----------------------------|------------------------------|
 | nuxeo.aws.bedrock.region   | The region to use (OPTIONAL) |
 
+
+## Run the sample config locally
+First, create the env file with the CLID and the MP dependencies
+```bash
+cat << EOF > .env
+NUXEO_PACKAGES=nuxeo-web-ui
+NUXEO_CLID=<YOUR_CLID>
+```
+
+Then, set the AWS credentials
+```bash
+aws sso login
+eval "$(aws configure export-credentials --format env)"
+export AWS_REGION="your_region"
+```
+
+Or if you run on MS Windows with powershell:
+```bash
+aws sso login
+aws configure export-credentials --format powershell | Invoke-Expression
+$Env:AWS_REGION="your_region"
+```
+
+Finally, start the docker compose stack
+
+```bash
+docker compose up -d
+```
+
 # Support
 **These features are not part of the Nuxeo Production platform.**
 
@@ -216,7 +254,7 @@ This is a moving project (no API maintenance, no deprecation process, etc.) If a
 useful for the Nuxeo Platform in general, they will be integrated directly into platform, not maintained here.
 
 # Nuxeo Marketplace
-TODO
+[here](https://connect.nuxeo.com/nuxeo/site/marketplace/package/nuxeo-aws-bedrock-connector)
 
 # License
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
