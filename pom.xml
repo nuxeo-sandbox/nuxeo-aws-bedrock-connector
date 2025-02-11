@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-parent</artifactId>
-    <version>2023.24</version>
+    <version>2023.25</version>
   </parent>
   <groupId>org.nuxeo.labs.aws.bedrock</groupId>
   <artifactId>nuxeo-aws-bedrock-connector-parent</artifactId>
