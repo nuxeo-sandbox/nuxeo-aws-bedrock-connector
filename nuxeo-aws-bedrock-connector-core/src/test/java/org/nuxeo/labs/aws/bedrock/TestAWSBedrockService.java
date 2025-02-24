@@ -42,11 +42,7 @@ public class TestAWSBedrockService {
     public void testGetTextEmbeddings() {
         Assume.assumeTrue(AwsCredentialChecker.isSet());
         String titanModelId = "amazon.titan-embed-text-v2:0";
-        String payload = """
-                {
-                    "inputText":"This some sample text"
-                }"
-                """;
+        String payload = "{\"inputText\":\"This some sample text\"}\"";
         String response = awsbedrockservice.invoke(titanModelId, payload);
         JSONObject responseBody = new JSONObject(response);
         double[] embeddings = responseBody.getJSONArray("embedding")
@@ -62,12 +58,7 @@ public class TestAWSBedrockService {
         String encodedString = Base64.getEncoder().encodeToString(fileContent);
 
         String titanModelId = "amazon.titan-embed-image-v1";
-        String payload = String.format("""
-                {
-                    "inputText" : "An image that shows the mascot of sendai city in japan eating a rice ball",
-                    "inputImage": "%s"
-                }
-                """, encodedString);
+        String payload = "{\n    \"inputText\" : \"An image that shows the mascot of sendai city in japan eating a rice ball\",\n    \"inputImage\": \"" + encodedString + "\"\n}\n";
         String response = awsbedrockservice.invoke(titanModelId, payload);
         JSONObject responseBody = new JSONObject(response);
         double[] embeddings = responseBody.getJSONArray("embedding")
@@ -80,11 +71,7 @@ public class TestAWSBedrockService {
     public void testResponseCaching() {
         Assume.assumeTrue(AwsCredentialChecker.isSet());
         String titanModelId = "amazon.titan-embed-text-v2:0";
-        String payload = """
-                {
-                    "inputText":"This some sample text"
-                }"
-                """;
+        String payload = " { \"inputText\":\"This some sample text\"}\" ";
         String response = awsbedrockservice.invoke(titanModelId, payload, true);
         Assert.assertNotNull(response);
 
@@ -97,11 +84,7 @@ public class TestAWSBedrockService {
     public void testCacheHit() {
         Assume.assumeTrue(AwsCredentialChecker.isSet());
         String modelId = "the model that don't exist yet";
-        String payload = """
-                {
-                    "inputText":"Let's see some magic"
-                }"
-                """;
+        String payload = "{\"inputText\":\"Let's see some magic\"}\"";
 
         String cachedResponse = "123";
 

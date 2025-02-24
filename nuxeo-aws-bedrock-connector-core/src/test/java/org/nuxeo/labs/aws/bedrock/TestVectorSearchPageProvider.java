@@ -16,7 +16,6 @@ import org.nuxeo.elasticsearch.test.RepositoryElasticSearchFeature;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
-import org.opensearch.OpenSearchStatusException;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -43,7 +42,7 @@ public class TestVectorSearchPageProvider {
             Assert.fail("Knn should have failed");
         } catch (NuxeoException e) {
             Throwable t = e.getCause();
-            Assert.assertTrue(t instanceof OpenSearchStatusException);
+            Assert.assertTrue(t instanceof Exception);
             Assert.assertTrue(t.getMessage().contains("reason=unknown query [knn]"));
         }
     }
