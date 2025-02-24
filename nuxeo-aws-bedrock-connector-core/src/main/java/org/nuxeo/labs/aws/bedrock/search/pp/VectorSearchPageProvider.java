@@ -112,13 +112,15 @@ public class VectorSearchPageProvider extends ElasticSearchNxqlPageProvider {
         BoolQueryBuilder combinedQuery = QueryBuilders
                 .boolQuery();
 
-        QueryBuilder knnJsonQuery = QueryBuilders.wrapperQuery("{\n    \"knn\": {\n     " +
-                "   \"" + namedParameters.get("vector_index") + "\": {\n        " +
-                "    \"vector\": " + vector + ",\n       " +
-                "     \"k\": " + namedParameters.getOrDefault("k", "10") + "\n  " +
-                "       }\n    }\n}\n");
+        String knnJsonQuery = "{\n" +
+                "  \"knn\": {\n" +
+                "    \"field\": \"" + namedParameters.get("vector_index") + "\",\n" +
+                "    \"query_vector\": " + vector + ",\n" +
+                "    \"k\": " + namedParameters.getOrDefault("k", "10") + "\n" +
+                "  }\n" +
+                "}";
 
-        combinedQuery = combinedQuery.must(knnJsonQuery).boost(1.0f);
+        combinedQuery = combinedQuery.must(QueryBuilders.wrapperQuery(knnJsonQuery)).boost(1.0f);
 
         if (searchOnAllRepositories()) {
             nxQuery.searchOnAllRepositories();
