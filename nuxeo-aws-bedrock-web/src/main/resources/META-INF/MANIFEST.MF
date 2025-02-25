@@ -1,0 +1,9 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Vendor: org.nuxeo.labs.aws.bedrock
+Bundle-Version: 1.0.0
+Bundle-Name: nuxeo-aws-bedrock-web
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: nuxeo-aws-bedrock-web;singleton=true
+Nuxeo-Component: OSGI-INF/embedding-ui-config.xml

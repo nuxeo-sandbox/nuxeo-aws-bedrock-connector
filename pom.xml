@@ -21,7 +21,8 @@
   <modules>
     <module>nuxeo-aws-bedrock-connector-core</module>
     <module>nuxeo-aws-bedrock-connector-package</module>
-<!--    <module>nuxeo-aws-bedrock-connector-docker</module>-->
+    <module>nuxeo-aws-bedrock-web</module>
+      <!--    <module>nuxeo-aws-bedrock-connector-docker</module>-->
   </modules>
   <scm>
     <connection>scm:git:${project.scm.url}</connection>
@@ -39,6 +40,11 @@
       <dependency>
         <groupId>org.nuxeo.labs.aws.bedrock</groupId>
         <artifactId>nuxeo-aws-bedrock-connector-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.labs.aws.bedrock</groupId>
+        <artifactId>nuxeo-aws-bedrock-web</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
