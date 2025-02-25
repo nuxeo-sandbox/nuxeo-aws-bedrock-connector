@@ -72,8 +72,19 @@
       </snapshots>
     </repository>
     <repository>
-      <id>maven-private</id>
-      <url>https://packages.nuxeo.com/repository/maven-private/</url>
+      <id>maven-internal</id>
+      <url>https://packages.nuxeo.com/repository/maven-internal/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>nuxeo-studio</id>
+      <url>https://connect.nuxeo.com/nuxeo/site/studio/maven</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -95,29 +106,4 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>3.1.1</version>
-        <configuration>
-          <projectVersionPolicyId>SemVerVersionPolicy</projectVersionPolicyId>
-          <tagNameFormat>@{project.version}</tagNameFormat>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <scmReleaseCommitComment>Release @{releaseLabel}</scmReleaseCommitComment>
-          <scmDevelopmentCommitComment>Post Release @{releaseLabel}</scmDevelopmentCommitComment>
-          <pushChanges>${pushReleaseChanges}</pushChanges>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <version>2.18.0</version>
-        <configuration>
-          <ruleSet/>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
