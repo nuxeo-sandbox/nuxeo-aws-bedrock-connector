@@ -4,8 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.ScriptScoreQueryBuilder;
+import org.elasticsearch.script.Script;
+import org.elasticsearch.script.ScriptType;
+import org.json.JSONArray;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
@@ -112,15 +115,7 @@ public class VectorSearchPageProvider extends ElasticSearchNxqlPageProvider {
         BoolQueryBuilder combinedQuery = QueryBuilders
                 .boolQuery();
 
-        String knnJsonQuery = "{\n" +
-                "  \"knn\": {\n" +
-                "    \"field\": \"" + namedParameters.get("vector_index") + "\",\n" +
-                "    \"query_vector\": " + vector + ",\n" +
-                "    \"k\": " + namedParameters.getOrDefault("k", "10") + "\n" +
-                "  }\n" +
-                "}";
-
-        combinedQuery = combinedQuery.must(QueryBuilders.wrapperQuery(knnJsonQuery)).boost(1.0f);
+        combinedQuery = combinedQuery.must(buildKnnScriptQuery(vector, namedParameters.get("vector_index"))).boost(1.0f);
 
         if (searchOnAllRepositories()) {
             nxQuery.searchOnAllRepositories();
@@ -156,6 +151,32 @@ public class VectorSearchPageProvider extends ElasticSearchNxqlPageProvider {
     public DocumentModelList getEmptyResult() {
         setResultsCount(0);
         return new DocumentModelListImpl();
+    }
+
+    private ScriptScoreQueryBuilder buildKnnScriptQuery(String queryVector, String type) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("query_vector", parseVector(queryVector));
+
+        // Construct the script for cosine similarity
+        Script script = new Script(ScriptType.INLINE, "painless",
+                "cosineSimilarity(params.query_vector, '" + type + "') + 1.0", params);
+
+        // Build the script-based query
+        return QueryBuilders.scriptScoreQuery(
+                QueryBuilders.existsQuery(type), // Filter: Only docs with vectors
+                script
+        );
+    }
+
+    private double[] parseVector(String vectorString) {
+        JSONArray jsonArray = new JSONArray(vectorString);
+
+        double[] result = new double[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++) {
+            result[i] = jsonArray.getDouble(i);
+        }
+
+        return result;
     }
 
 

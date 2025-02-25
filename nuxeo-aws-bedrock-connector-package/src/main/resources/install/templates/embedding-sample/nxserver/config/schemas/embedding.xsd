@@ -4,9 +4,17 @@
            xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/embedding"
            targetNamespace="http://www.nuxeo.org/ecm/project/schemas/embedding">
   <!-- helper XSD definitions for list types -->  
-  <xs:simpleType name="doubleList">
-    <xs:list itemType="xs:double"/>
-  </xs:simpleType>
+<!--  <xs:simpleType name="doubleList">-->
+<!--    <xs:list itemType="xs:double"/>-->
+<!--  </xs:simpleType>-->
+
+  <xs:complexType name="doubleList">
+    <xs:sequence>
+      <xs:element name="item" type="xs:double" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
   <xs:element name="image" type="nxs:doubleList"/>
   <xs:element name="text" type="nxs:doubleList"/>
 </xs:schema>
