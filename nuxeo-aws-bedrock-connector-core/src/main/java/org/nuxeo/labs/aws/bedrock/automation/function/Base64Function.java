@@ -16,7 +16,7 @@ public class Base64Function implements ContextHelper {
         return Base64.getEncoder().encodeToString(fileContent);
     }
 
-    public String string2Base64(String text) throws IOException {
+    public String string2Base64(String text) {
         return Base64.getEncoder().encodeToString(text.getBytes());
     }
 

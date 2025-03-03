@@ -29,7 +29,7 @@ public class TestBase64Function {
     }
 
     @Test
-    public void testString2Base64Conversion() throws IOException {
+    public void testString2Base64Conversion() {
         Base64Function fn = new Base64Function();
         String base64str = fn.string2Base64("This is a test");
         Assert.assertEquals("VGhpcyBpcyBhIHRlc3Q=", base64str);
