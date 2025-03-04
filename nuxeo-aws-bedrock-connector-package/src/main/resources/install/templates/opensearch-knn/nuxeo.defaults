@@ -1,2 +1,4 @@
 ## Edit this file to customize your configuration ##
 opensearch-knn.target=.
+
+nuxeo.template.includes=opensearch1-search-client

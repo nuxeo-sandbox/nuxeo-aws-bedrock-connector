@@ -1,2 +1,4 @@
 ## Edit this file to customize your configuration ##
 embedding-sample.target=.
+
+nuxeo.template.includes=opensearch-knn

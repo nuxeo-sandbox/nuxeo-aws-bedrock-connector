@@ -38,7 +38,7 @@ services:
     environment:
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
       - NUXEO_DEV=true
-      - NUXEO_PACKAGES=nuxeo-web-ui ${NUXEO_PACKAGES}
+      - NUXEO_PACKAGES=nuxeo-web-ui nuxeo-search-client-opensearch1 ${NUXEO_PACKAGES}
       - NUXEO_CLID=${NUXEO_CLID}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
