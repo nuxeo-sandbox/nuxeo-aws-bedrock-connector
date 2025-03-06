@@ -57,6 +57,10 @@ public class VectorSearchPageProvider extends SearchServicePageProvider {
             principal = coreSession.getPrincipal();
         }
 
+        boolean returnEmpty = Boolean.parseBoolean(namedParameters.get("return_empty"));
+        if(returnEmpty) {
+            return getEmptyResult();
+        }
 
         String index = namedParameters.get("vector_index");
         String vector = namedParameters.get("vector_value");

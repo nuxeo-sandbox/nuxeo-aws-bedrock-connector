@@ -232,20 +232,45 @@
 
     _update: function(searchValue, visible) {
       if (visible) {
-        this.params = this._computeParams(document);
-        this._refresh();
+        this.params = this._computeParams(this.document);
+        if (this.params) {
+          this._refresh();
+        }
       }
     },
 
     _computeParams: function(document) {
-      let params = {};
       if (this.searchValue) {
+        let params = {};
+        params.system_uuid = [document.uid];
         params.vector_index = this.searchProperty;
         params.vector_value = this.searchValue;
         params.min_score = "0.5";
         params.k = "30";
+        return params;
+      } else {
+        //workaround for the pp to return nothing
+        return {
+          return_empty: true
+        }
       }
-      return params;
+    },
+
+    _refresh() {
+      if (this.document && this.params && this.visible) {
+        this.results.fetch();
+      }
+    },
+
+    _setupDnD: function() {
+      if (this.withDragAndDrop) {
+        var results = this.results;
+        if (results) {
+          results.addEventListener('dragover', this._dragoverHandler);
+          results.addEventListener('dragleave', this._dragleaveHandler);
+          results.addEventListener('drop', this._dropHandler);
+        }
+      }
     }
 
   });
